@@ -1,7 +1,36 @@
-import Link from 'next/link'
-import Navbar from '../components/Navbar'
+"use client";
+
+import { useState } from "react";
+
+interface RequestFormData {
+  fullName: string;
+  bloodGroup: string;
+  city: string;
+  contactNumber: string;
+}
+
+const bloodGroups = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
 
 export default function RequestPage() {
+  const [formData, setFormData] = useState<RequestFormData>({
+    fullName: "",
+    bloodGroup: "",
+    city: "",
+    contactNumber: "",
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Blood Request Submitted:", formData);
+  };
+
   return (
     <div className="min-h-screen bg-red-50">
       <Navbar />
@@ -17,60 +46,64 @@ export default function RequestPage() {
             </Link>
           </div>
 
-          <form className="space-y-6">
-            <label className="block">
-              <span className="text-sm font-medium text-gray-700">Name</span>
-              <input
-                type="text"
-                placeholder="Your full name"
-                className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-red-400 focus:ring-2 focus:ring-red-200"
-              />
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Blood Group
             </label>
-
-            <label className="block">
-              <span className="text-sm font-medium text-gray-700">Blood Group</span>
-              <select
-                className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-red-400 focus:ring-2 focus:ring-red-200"
-              >
-                <option value="">Select blood group</option>
-                <option value="A+">A+</option>
-                <option value="A-">A-</option>
-                <option value="B+">B+</option>
-                <option value="B-">B-</option>
-                <option value="O+">O+</option>
-                <option value="O-">O-</option>
-                <option value="AB+">AB+</option>
-                <option value="AB-">AB-</option>
-              </select>
-            </label>
-
-            <label className="block">
-              <span className="text-sm font-medium text-gray-700">City</span>
-              <input
-                type="text"
-                placeholder="City or area"
-                className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-red-400 focus:ring-2 focus:ring-red-200"
-              />
-            </label>
-
-            <label className="block">
-              <span className="text-sm font-medium text-gray-700">Contact Number</span>
-              <input
-                type="tel"
-                placeholder="Phone number"
-                className="mt-2 w-full rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm outline-none transition focus:border-red-400 focus:ring-2 focus:ring-red-200"
-              />
-            </label>
-
-            <button
-              type="submit"
-              className="w-full rounded-2xl bg-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-red-700"
+            <select
+              name="bloodGroup"
+              value={formData.bloodGroup}
+              onChange={handleChange}
+              required
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-400 bg-white"
             >
-              Submit Request
-            </button>
-          </form>
-        </div>
-      </main>
+              <option value="">Select blood group</option>
+              {bloodGroups.map((group) => (
+                <option key={group} value={group}>
+                  {group}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              City
+            </label>
+            <input
+              type="text"
+              name="city"
+              value={formData.city}
+              onChange={handleChange}
+              required
+              placeholder="Enter your city"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-400"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Contact Number
+            </label>
+            <input
+              type="tel"
+              name="contactNumber"
+              value={formData.contactNumber}
+              onChange={handleChange}
+              required
+              placeholder="e.g. 03001234567"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-red-400"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="mt-2 bg-red-600 text-white py-2.5 rounded-lg font-medium hover:bg-red-700 active:scale-95 transition-all duration-200"
+          >
+            Submit Request
+          </button>
+        </form>
+      </div>
     </div>
-  )
+  );
 }
