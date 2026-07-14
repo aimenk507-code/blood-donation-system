@@ -4,7 +4,7 @@ import Navbar from '../components/Navbar'
 export default function RequestPage() {
   return (
     <div className="min-h-screen bg-red-50">
-      <Navbar title="Blood Donation System" />
+      <Navbar />
       <main className="mx-auto max-w-3xl px-6 py-10 sm:px-8">
         <div className="rounded-3xl bg-white p-8 shadow-xl">
           <div className="mb-8 flex items-center justify-between">

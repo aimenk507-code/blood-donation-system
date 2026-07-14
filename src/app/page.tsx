@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import ActionCard from './components/ActionCard'
 import Footer from './components/Footer'
 import Navbar from './components/Navbar'
@@ -35,6 +36,14 @@ export default function Home() {
               <p className="mt-4 max-w-2xl text-gray-600">
                 Manage blood requests, donations, and volunteer activity from one polished dashboard.
               </p>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link href="/login" className="rounded-full bg-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-red-700">
+                  Login
+                </Link>
+                <Link href="/donate" className="rounded-full border border-red-200 bg-red-50 px-5 py-3 text-sm font-semibold text-red-700 transition hover:bg-red-100">
+                  Book donation
+                </Link>
+              </div>
             </div>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
               <div className="rounded-3xl bg-red-600 px-6 py-5 text-white shadow-lg">
@@ -65,9 +74,9 @@ export default function Home() {
             icon={<span>📩</span>}
           />
           <ActionCard
-            title="Donate Blood"
-            description="Book a donation and help save lives with your blood donation."
-            buttonText="Donate Now"
+            title="Become a donor"
+            description="Book a donation appointment and help save lives in your community."
+            buttonText="Join now"
             link="/donate"
             icon={<span>❤️</span>}
           />
