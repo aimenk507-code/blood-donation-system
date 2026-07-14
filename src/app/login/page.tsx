@@ -10,6 +10,7 @@ export default function LoginPage() {
 
   function handleLogin(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault()
+    console.log({ email, password })
     router.push('/')
   }
 
