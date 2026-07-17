@@ -1,7 +1,54 @@
+'use client'
+
+import { useState, type ChangeEvent, type FormEvent } from 'react'
 import Link from 'next/link'
 import Navbar from '../components/Navbar'
 
 export default function EmergencyPage() {
+  const [formData, setFormData] = useState({
+    name: '',
+    bloodGroup: '',
+    location: '',
+    contact: '',
+  })
+  const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  function handleChange(event: ChangeEvent<HTMLInputElement | HTMLSelectElement>) {
+    const { name, value } = event.target
+    setFormData((current) => ({ ...current, [name]: value }))
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setLoading(true)
+    setError(null)
+    setMessage(null)
+
+    try {
+      const res = await fetch('/api/emergency', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data?.error || 'Failed to submit emergency request')
+        return
+      }
+
+      setMessage('Emergency request submitted successfully.')
+      setFormData({ name: '', bloodGroup: '', location: '', contact: '' })
+    } catch {
+      setError('Network error. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-red-50 text-gray-900">
       <Navbar />
@@ -33,6 +80,31 @@ export default function EmergencyPage() {
               </div>
             </div>
           </div>
+
+          <form onSubmit={handleSubmit} className="mt-8 rounded-3xl border border-red-100 bg-white p-6 shadow-sm">
+            <h2 className="text-xl font-semibold text-red-800">Submit emergency SOS</h2>
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <input name="name" value={formData.name} onChange={handleChange} required placeholder="Your name" className="w-full rounded-2xl border border-gray-200 px-4 py-3" />
+              <select name="bloodGroup" value={formData.bloodGroup} onChange={handleChange} required className="w-full rounded-2xl border border-gray-200 px-4 py-3">
+                <option value="">Select blood group</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+              </select>
+              <input name="location" value={formData.location} onChange={handleChange} required placeholder="Location" className="w-full rounded-2xl border border-gray-200 px-4 py-3" />
+              <input name="contact" value={formData.contact} onChange={handleChange} required placeholder="Contact number" className="w-full rounded-2xl border border-gray-200 px-4 py-3" />
+            </div>
+            <button type="submit" disabled={loading} className="mt-4 rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-50">
+              {loading ? 'Submitting...' : 'Send SOS'}
+            </button>
+            {error ? <p className="mt-3 text-sm text-red-600">{error}</p> : null}
+            {message ? <p className="mt-3 text-sm text-green-700">{message}</p> : null}
+          </form>
 
           <div className="mt-8 flex items-center justify-center gap-4">
             <Link href="/" className="rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-700">

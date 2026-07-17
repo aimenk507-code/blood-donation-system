@@ -1,17 +1,41 @@
-import { NextResponse } from "next/server";
-import { db } from "../../../lib/db";
+import { NextResponse } from 'next/server'
+import { prisma } from '../../../lib/prisma'
+
+export async function GET() {
+  try {
+    const requests = await prisma.bloodRequest.findMany({ orderBy: { createdAt: 'desc' } })
+    return NextResponse.json(requests)
+  } catch (err) {
+    return NextResponse.json({ error: 'Failed to fetch blood requests' }, { status: 500 })
+  }
+}
 
 export async function POST(req: Request) {
   try {
-    const { patientName, bloodGroup, hospital, urgency } = await req.json();
+    const body = (await req.json()) as Record<string, string | undefined>
+    const patientName = body.patientName || body.name
+    const bloodGroup = body.bloodGroup || body.blood
+    const hospital = body.hospital || body.city
+    const urgency = body.urgency || body.phone
+    const contactNumber = body.contactNumber
 
-    await db.query(
-      "INSERT INTO requests (patient_name, blood_group, hospital, urgency, status) VALUES (?, ?, ?, ?, 'pending')",
-      [patientName, bloodGroup, hospital, urgency]
-    );
+    if (!patientName || !bloodGroup || !hospital || !urgency) {
+      return NextResponse.json({ error: 'Patient name, blood group, hospital, and urgency are required' }, { status: 400 })
+    }
 
-    return NextResponse.json({ message: "Request submitted" });
+    const request = await prisma.bloodRequest.create({
+      data: {
+        patientName: String(patientName),
+        bloodGroup: String(bloodGroup),
+        hospital: hospital ? String(hospital) : null,
+        urgency: urgency ? String(urgency) : null,
+        contactNumber: contactNumber ? String(contactNumber) : null,
+      },
+    })
+
+    return NextResponse.json({ message: 'Request submitted', request })
   } catch (err) {
-    return NextResponse.json({ error: "Failed to submit request" }, { status: 500 });
+    console.error(err)
+    return NextResponse.json({ error: 'Failed to submit request' }, { status: 500 })
   }
 }

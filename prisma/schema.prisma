@@ -1,0 +1,62 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(100)
+  email        String   @unique @db.VarChar(255)
+  passwordHash String   @map("password_hash") @db.VarChar(255)
+  city         String?  @db.VarChar(100)
+  bloodGroup   String?  @map("blood_group") @db.VarChar(10)
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Donor {
+  id             Int       @id @default(autoincrement())
+  name           String    @db.VarChar(100)
+  email          String?   @db.VarChar(255)
+  bloodGroup     String    @map("blood_group") @db.VarChar(10)
+  location       String?   @db.VarChar(150)
+  preferredDate  DateTime? @map("preferred_date")
+  notes          String?   @db.Text
+  phone          String?   @db.VarChar(20)
+  city           String?   @db.VarChar(100)
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  @@map("donors")
+}
+
+model BloodRequest {
+  id            Int      @id @default(autoincrement())
+  patientName   String   @map("patient_name") @db.VarChar(100)
+  bloodGroup    String   @map("blood_group") @db.VarChar(10)
+  hospital      String?  @db.VarChar(150)
+  urgency       String?  @db.VarChar(50)
+  contactNumber String?  @map("contact_number") @db.VarChar(50)
+  status        String   @default("pending") @db.VarChar(20)
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@map("blood_requests")
+}
+
+model EmergencyRequest {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(100)
+  bloodGroup   String   @map("blood_group") @db.VarChar(10)
+  location     String?  @db.VarChar(150)
+  contact      String   @db.VarChar(50)
+  urgency      String   @default("urgent") @db.VarChar(20)
+  status       String   @default("pending") @db.VarChar(20)
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@map("emergency_requests")
+}

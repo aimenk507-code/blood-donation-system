@@ -12,18 +12,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
     }
 
-    const user = await prisma.users.findUnique({ where: { email } })
+    const user = await prisma.user.findUnique({ where: { email } })
 
     if (!user) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
     }
 
-    const hashed = (user as any).passwordHash ?? (user as any).password ?? (user as any).password_hash
-    if (!hashed) {
-      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
-    }
-
-    const match = await bcrypt.compare(password, String(hashed))
+    const match = await bcrypt.compare(String(password), user.passwordHash)
 
     if (!match) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 })
@@ -34,13 +29,14 @@ export async function POST(req: Request) {
     const secret = process.env.JWT_SECRET || 'dev-secret'
     const token = jwt.sign({ sub: String(user.id), email: user.email }, secret, { expiresIn: '7d' })
 
-    const maxAge = 7 * 24 * 60 * 60 // 7 days
+    const maxAge = 7 * 24 * 60 * 60
     const secure = process.env.NODE_ENV === 'production'
     let cookie = `token=${token}; HttpOnly; Path=/; Max-Age=${maxAge}; SameSite=Lax`
     if (secure) cookie += '; Secure'
 
     return NextResponse.json({ ok: true, user: payload }, { status: 200, headers: { 'Set-Cookie': cookie } })
   } catch (err) {
+    console.error(err)
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 })
   }
 }
