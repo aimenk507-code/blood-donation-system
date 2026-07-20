@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import ActionCard from './components/ActionCard'
+import Card from './components/Card'
 import Footer from './components/Footer'
-import Link from 'next/link'
 import Navbar from './components/Navbar'
 import StatsCard from './components/StatsCard'
 
@@ -40,8 +40,11 @@ export default function Home() {
                 <Link href="/login" className="rounded-full bg-red-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-red-700">
                   Login
                 </Link>
-                <Link href="/donate" className="rounded-full border border-red-200 bg-red-50 px-5 py-3 text-sm font-semibold text-red-700 transition hover:bg-red-100">
-                  Book donation
+                <Link href="/signup" className="rounded-full border border-red-200 bg-red-50 px-5 py-3 text-sm font-semibold text-red-700 transition hover:bg-red-100">
+                  Create account
+                </Link>
+                <Link href="/dashboard" className="rounded-full border border-gray-200 bg-white px-5 py-3 text-sm font-semibold text-gray-700 transition hover:bg-gray-100">
+                  Dashboard
                 </Link>
               </div>
             </div>

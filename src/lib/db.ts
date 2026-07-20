@@ -1,12 +1,12 @@
-import mysql from "mysql2/promise";
+import mysql from 'mysql2/promise'
 
 const {
-  MYSQL_HOST = "localhost",
-  MYSQL_PORT = "3306",
-  MYSQL_USER = "root",
-  MYSQL_PASSWORD = "",
-  MYSQL_DATABASE = "blood_donation_system",
-} = process.env;
+  MYSQL_HOST = 'localhost',
+  MYSQL_PORT = '3306',
+  MYSQL_USER = 'root',
+  MYSQL_PASSWORD = '',
+  MYSQL_DATABASE = 'blood_donation_system',
+} = process.env
 
 export const db = mysql.createPool({
   host: MYSQL_HOST,
@@ -17,4 +17,13 @@ export const db = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
-});
+})
+
+export async function ensureDatabaseConnection() {
+  try {
+    await db.query('SELECT 1')
+    return true
+  } catch {
+    return false
+  }
+}
